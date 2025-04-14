@@ -9,8 +9,12 @@ namespace Blog.Domain.ContentManagement
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public ICollection<Category> Categories { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+
+        private List<Comment> _comments = new();
+        public IReadOnlyCollection<Comment> Comments => _comments;
+
+        private List<Category> _categories  = new();
+        public IReadOnlyCollection<Category> Categories => _categories;
 
         // ORM
         public Post()
@@ -18,13 +22,31 @@ namespace Blog.Domain.ContentManagement
 
         }
 
-        public Post(Guid id, string title, string content, ICollection<Category> categories, ICollection<Comment> comments)
+        public Post(Guid id, string title, string content)
         {
             Id = id;
             Title = title;
             Content = content;
-            Categories = categories;
-            Comments = comments;
+        }
+
+        public void AddComment(Comment comment)
+        {
+
+            if (string.IsNullOrWhiteSpace(comment.Content))
+            {
+                throw new Exception("The comment cant be null");
+            }
+
+            _comments.Add(comment);
+
+        }
+
+        public void AttachToCategory(Category category)
+        {
+            if (!_categories.Any(c => c.Id == category.Id))
+            {
+                _categories.Add(category);
+            }
         }
 
 

@@ -12,11 +12,10 @@
             
         }
 
-        public Category(Guid id, string name, ICollection<Post> posts)
+        public Category(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Posts = posts;
         }
     }
 }
