@@ -33,5 +33,19 @@ namespace Blog.Domain.UserManagement
             }
             _favorites.Add(new Favorite { PostId = postId, UserId = this.Id });
         }
+
+        public void UnfavoritePost(Guid postId)
+        {
+            Favorite? favorite = _favorites.FirstOrDefault(f => f.PostId == postId);
+
+            if (favorite == null)
+            {
+                //TODO: Exceção personalizada
+                throw new Exception("Post insn't a favorite");
+            }
+
+            _favorites.Remove(favorite);
+
+        }
     }
 }
