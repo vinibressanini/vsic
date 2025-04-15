@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Domain", "Blog.Domain\Blog.Domain.csproj", "{AB2391E6-0F9C-48F6-9683-67197D2415C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Domain", "Blog.Domain\Blog.Domain.csproj", "{AB2391E6-0F9C-48F6-9683-67197D2415C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Tests", "Blog.Tests\Blog.Tests.csproj", "{B6D017DE-E604-4E1F-8D4A-A0715B5C55A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Tests", "Blog.Tests\Blog.Tests.csproj", "{B6D017DE-E604-4E1F-8D4A-A0715B5C55A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Infra", "Blog.Infra\Blog.Infra.csproj", "{5EA57F6A-9301-4BCE-9728-657AF445EBB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B6D017DE-E604-4E1F-8D4A-A0715B5C55A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6D017DE-E604-4E1F-8D4A-A0715B5C55A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6D017DE-E604-4E1F-8D4A-A0715B5C55A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EA57F6A-9301-4BCE-9728-657AF445EBB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EA57F6A-9301-4BCE-9728-657AF445EBB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EA57F6A-9301-4BCE-9728-657AF445EBB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EA57F6A-9301-4BCE-9728-657AF445EBB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

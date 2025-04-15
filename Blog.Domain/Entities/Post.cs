@@ -7,12 +7,12 @@ namespace Blog.Domain.Entities
     public class Post : Entity
     {
 
-        public Guid Id { get; private set; }
-        public string Title { get; private set; }
-        public string Content { get; private set; }
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
         public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; private  set; } = DateTime.UtcNow;
-        public ushort FavoriteCount { get; private set; }
+        public ICollection<User> FavoritedBy { get; set; }
 
         private List<Comment> _comments = new();
         public IReadOnlyCollection<Comment> Comments => _comments;
@@ -32,6 +32,7 @@ namespace Blog.Domain.Entities
             Title = title;
             Content = content;
 
+            //TODO: Mover 
             var size = ((int)Math.Ceiling(content.Length * 0.33));
             var preview = content.Substring(0,size);
 

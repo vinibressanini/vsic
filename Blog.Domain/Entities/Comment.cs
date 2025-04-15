@@ -4,11 +4,14 @@ namespace Blog.Domain.Entities
 {
     public class Comment : Entity
     {
-        public Guid Id { get; private set; }
-        public Guid? ParentId { get; private set; }
-        public User Author { get; private set; }
-        public string Content { get; private set; }
-        public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
+        public Guid Id { get;  set; }
+        public Guid? ParentId { get;  set; }
+        public User Author { get;  set; }
+        public int AuthorId { get; set; }
+        public Post Post { get; set; }
+        public int PostId { get; set; }
+        public string Content { get;  set; }
+        public DateTime CreatedAt { get;  init; } = DateTime.UtcNow;
 
         // ORM
         public Comment()
@@ -16,12 +19,13 @@ namespace Blog.Domain.Entities
 
         }
 
-        public Comment(Guid id, Guid? parentId, User author, string content)
+        public Comment(Guid id, Guid? parentId, User author, Post post, string content)
         {
             Id = id;
             ParentId = parentId;
             Author = author;
             Content = content;
+            Post = post;
         }
 
     }
