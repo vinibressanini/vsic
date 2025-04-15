@@ -1,10 +1,10 @@
-﻿namespace Blog.Domain.UserInteraction
+﻿namespace Blog.Domain.Entities
 {
     public class Favorite
     {
 
-        public Guid PostId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid PostId { get; private init; }
+        public Guid UserId { get; private init; }
 
         // ORM
         public Favorite() { }

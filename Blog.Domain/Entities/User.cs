@@ -1,9 +1,9 @@
-﻿
-using Blog.Domain.UserInteraction;
+﻿using Blog.Domain.Events;
+using Blog.Domain.Events.User;
 
-namespace Blog.Domain.UserManagement
+namespace Blog.Domain.Entities
 {
-    public class User
+    public class User : Entity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -22,6 +22,8 @@ namespace Blog.Domain.UserManagement
             Name = name;
             Email = email;
             Password = password;
+
+            AddDomainEvents(new UserCreatedEvent(username: name,email: email));
         }
 
         public void FavoritePost(Guid postId)
@@ -31,7 +33,7 @@ namespace Blog.Domain.UserManagement
                 //TODO: Exceção personalizada
                 throw new Exception("Post already favorite");
             }
-            _favorites.Add(new Favorite { PostId = postId, UserId = this.Id });
+            _favorites.Add(new Favorite { PostId = postId, UserId = Id });
         }
 
         public void UnfavoritePost(Guid postId)

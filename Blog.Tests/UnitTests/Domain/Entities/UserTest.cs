@@ -1,9 +1,9 @@
-﻿
-using Blog.Domain.ContentManagement;
-using Blog.Domain.UserInteraction;
-using Blog.Domain.UserManagement;
+﻿using Blog.Domain.Entities;
+using Blog.Domain.Events.User;
+using NuGet.Frameworks;
+using System.Xml.Linq;
 
-namespace Blog.Tests.UnitTests.Domain.UserManagement
+namespace Blog.Tests.UnitTests.Domain.Entities
 {
     internal class UserTest
     {
@@ -15,8 +15,8 @@ namespace Blog.Tests.UnitTests.Domain.UserManagement
         [SetUp]
         public void SetUp()
         {
-            user = new () {Id = new Guid(),Name = "user",Email = "email.com",Password = "password"};
-            post = new () { Id = new Guid(), Title = "Post title", Content = "Post content"};
+            user = new() { Id = new Guid(), Name = "user", Email = "email.com", Password = "password" };
+            post = new() { Id = new Guid(), Title = "Post title", Content = "Post content" };
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Blog.Tests.UnitTests.Domain.UserManagement
             Assert.That(user.Favorites.First().PostId, Is.EqualTo(post.Id));
 
         }
-        
+
         [Test]
         public void FavoritePost_ShouldThrowException_WhenPostIsAlreadyAFavorite()
         {
@@ -40,7 +40,7 @@ namespace Blog.Tests.UnitTests.Domain.UserManagement
             Assert.Throws<Exception>(() => call(post.Id));
 
         }
-        
+
         [Test]
         public void UnfavoritePost_ShouldRemovePostFromFavorites_WhenSuccessful()
         {
@@ -48,7 +48,7 @@ namespace Blog.Tests.UnitTests.Domain.UserManagement
 
             Assert.That(user.Favorites, Is.Not.Null);
             Assert.That(user.Favorites.Count(), Is.EqualTo(1));
-            
+
             user.UnfavoritePost(post.Id);
 
             Assert.That(user.Favorites, Is.Empty);
@@ -63,6 +63,21 @@ namespace Blog.Tests.UnitTests.Domain.UserManagement
             var call = user.UnfavoritePost;
 
             Assert.Throws<Exception>(() => call(post.Id));
+
+        }
+
+        [Test]
+        public void UserCreation_ShouldRaiseADomainEvent_WhenSuccessful()
+        {
+
+            User newUser = new User(id: new Guid(), name : "User", email : "myemail.com", password : "password");
+
+            var dEvent = newUser.GetDomainEvents();
+
+            Assert.That(dEvent, Is.Not.Empty);
+            Assert.That(dEvent.First(), Is.Not.Null);
+            Assert.That(dEvent.First(), Is.TypeOf<UserCreatedEvent>());
+
 
         }
 
