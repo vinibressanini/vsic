@@ -14,9 +14,9 @@ namespace Blog.Tests.UnitTests.Domain.Entities
         [SetUp]
         public void SetUp()
         {
-            post = new Post() { Id = new Guid(), Content = "This is the post content", Title = "Post Title" };
-            author = new User() { Id = new Guid(), Name = "user", Email = "user@email", Password = "password" };
-            category = new() { Id = new Guid(), Name = "Tech" };
+            post = new Post(id: new Guid(), title : "Post Title",content : "Post Content");
+            author = new User(id: new Guid(), name: "User", email: "email.com", password: "password");
+            category = new(id: new Guid(),name: "Tech");
 
         }
 
@@ -112,12 +112,85 @@ namespace Blog.Tests.UnitTests.Domain.Entities
         [Test]
         public void PostCreation_ShouldRaiseDomainEvent_WhenSuccessful()
         {
-            Post newPost = new Post(id: new Guid(),title: "new title",content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+            Post newPost = new Post(id: new Guid(), title: "new title", content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
 
             var dEvent = newPost.GetDomainEvents();
 
             Assert.That(dEvent, Is.Not.Empty);
             Assert.That(dEvent.First(), Is.TypeOf<PostCreatedEvent>());
+        }
+
+        [Test]
+        public void Publish_ShouldInitializePostCreationData_WhenAtleastOneCategoryIsAssigned()
+        {
+            post.AssignToCategory(category);
+
+            post.Publish();
+
+            Assert.That(post.Status, Is.EqualTo(PostStatus.Active));
+            Assert.That(post.CreatedAt, Is.Not.EqualTo(default(DateTime)));
+            Assert.That(post.UpdatedAt, Is.Not.EqualTo(default(DateTime)));
+
+        }
+
+        [Test]
+        public void Publish_ShouldThrowException_WhenNoCategoryIsAssigned()
+        {
+
+            var call = post.Publish;
+
+            Assert.Throws<Exception>(() => call());
+
+            Assert.That(post.CreatedAt, Is.EqualTo(default(DateTime)));
+            Assert.That(post.UpdatedAt, Is.EqualTo(default(DateTime)));
+
+        }
+
+        [Test]
+        public void PublishAtDate_ShouldInitializePublishAt_WhenAtleastOneCategoryIsAssignedAndDateIsGreaterThanNow()
+        {
+            post.AssignToCategory(category);
+
+            DateTime publishDate = DateTime.UtcNow.AddDays(1);
+
+            post.PublishAtDate(publishDate);
+
+            Assert.That(post.Status, Is.EqualTo(PostStatus.Active));
+            Assert.That(post.CreatedAt, Is.EqualTo(publishDate));
+            Assert.That(post.UpdatedAt, Is.EqualTo(publishDate));
+            Assert.That(post.PublishAt, Is.EqualTo(publishDate));
+        }
+
+        [Test]
+        public void PublishAtDate_ShouldThrowException_WhenNoCategoryIsAssigned()
+        {
+
+            DateTime publishDate = DateTime.UtcNow.AddDays(1);
+
+            var call = post.PublishAtDate;
+
+            Assert.Throws<Exception>(() => call(publishDate));
+
+            Assert.That(post.CreatedAt, Is.EqualTo(default(DateTime)));
+            Assert.That(post.UpdatedAt, Is.EqualTo(default(DateTime)));
+            Assert.That(post.PublishAt, Is.Null);
+        }
+
+        [Test]
+        public void PublishAtDate_ShouldThrowException_WhenDateIsEqualOrLessThanNow()
+        {
+
+            DateTime publishDate = DateTime.UtcNow;
+
+            post.AssignToCategory(category);
+
+            var call = post.PublishAtDate;
+
+            Assert.Throws<Exception>(() => call(publishDate));
+
+            Assert.That(post.CreatedAt, Is.EqualTo(default(DateTime)));
+            Assert.That(post.UpdatedAt, Is.EqualTo(default(DateTime)));
+            Assert.That(post.PublishAt, Is.Null);
         }
 
     }

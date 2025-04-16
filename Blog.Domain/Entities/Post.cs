@@ -6,12 +6,14 @@ namespace Blog.Domain.Entities
 {
     public class Post : Entity
     {
-
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private  set; } = DateTime.UtcNow;
+        #region PROPERTIES
+        public Guid Id { get; private init; }
+        public string Title { get; private set; }
+        public string Content { get; private set; }
+        public PostStatus Status { get; private set; }
+        public DateTime? PublishAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         public ICollection<User> FavoritedBy { get; set; }
 
         private List<Comment> _comments = new();
@@ -19,7 +21,9 @@ namespace Blog.Domain.Entities
 
         private List<Category> _categories = new();
         public IReadOnlyCollection<Category> Categories => _categories;
+        #endregion
 
+        #region CONSTRUCTORS
         // ORM
         public Post()
         {
@@ -34,11 +38,13 @@ namespace Blog.Domain.Entities
 
             //TODO: Mover 
             var size = ((int)Math.Ceiling(content.Length * 0.33));
-            var preview = content.Substring(0,size);
+            var preview = content.Substring(0, size);
 
-            AddDomainEvents(new PostCreatedEvent(postName : title,contentPreview : preview));
+            AddDomainEvents(new PostCreatedEvent(postName: title, contentPreview: preview));
         }
+        #endregion
 
+        #region DOMAIN LOGIC
         public void AddComment(Comment comment)
         {
 
@@ -52,6 +58,31 @@ namespace Blog.Domain.Entities
             AddDomainEvents(new CommentCreatedEvent(comment));
 
         }
+
+        public void Publish()
+        {
+            if (postHasAnyCategory())
+            {
+                CreatedAt = DateTime.UtcNow;
+                UpdatedAt = DateTime.UtcNow;
+                Status = PostStatus.Active;
+            }
+        }
+
+        public void PublishAtDate(DateTime publishAt)
+        {
+            if (publishAt < DateTime.UtcNow) throw new Exception("The publish date should be greater than now");
+
+            if (postHasAnyCategory())
+            {
+                PublishAt = publishAt;
+                CreatedAt = publishAt;
+                UpdatedAt = publishAt;
+                Status = PostStatus.Active;
+            }
+
+
+        }  
 
         public void AssignToCategory(Category category)
         {
@@ -73,6 +104,21 @@ namespace Blog.Domain.Entities
             _categories.Remove(assignedCategory);
         }
 
+        private bool postHasAnyCategory()
+        {
+            if (!_categories.Any())
+            {
+                throw new Exception("Post must have atleast one category assigned");
+            }
 
+            return true;
+        }
+        #endregion
+    }
+
+    public enum PostStatus
+    {
+        Active,
+        Inactive,
     }
 }

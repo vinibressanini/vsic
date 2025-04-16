@@ -31,6 +31,15 @@ namespace Blog.Infra.Configs
                 .HasColumnName("updated_at")
                 .HasColumnType("timestamp");
 
+            builder.Property(p => p.PublishAt)
+                .HasColumnName("publish_at")
+                .HasColumnType("timestamp");
+
+            builder.Property(p => p.Status)
+                .HasColumnName("status")
+                .HasColumnType("smallserial")
+                .IsRequired();
+
             builder.HasMany(p => p.Comments)
                 .WithOne(c => c.Post)
                 .HasForeignKey(c => c.PostId);
