@@ -110,11 +110,13 @@ namespace Blog.Tests.UnitTests.Domain.Entities
         }
 
         [Test]
-        public void PostCreation_ShouldRaiseDomainEvent_WhenSuccessful()
+        public void Publish_ShouldRaiseDomainEvent_WhenSuccessful()
         {
-            Post newPost = new Post(id: new Guid(), title: "new title", content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+            post.AssignToCategory(category);
 
-            var dEvent = newPost.GetDomainEvents();
+            post.Publish();
+
+            var dEvent = post.GetDomainEvents();
 
             Assert.That(dEvent, Is.Not.Empty);
             Assert.That(dEvent.First(), Is.TypeOf<PostCreatedEvent>());
@@ -128,6 +130,7 @@ namespace Blog.Tests.UnitTests.Domain.Entities
             post.Publish();
 
             Assert.That(post.Status, Is.EqualTo(PostStatus.Active));
+            Assert.That(post.Slug, Is.Not.Empty);
             Assert.That(post.CreatedAt, Is.Not.EqualTo(default(DateTime)));
             Assert.That(post.UpdatedAt, Is.Not.EqualTo(default(DateTime)));
 
@@ -155,7 +158,8 @@ namespace Blog.Tests.UnitTests.Domain.Entities
 
             post.PublishAtDate(publishDate);
 
-            Assert.That(post.Status, Is.EqualTo(PostStatus.Active));
+            Assert.That(post.Status, Is.EqualTo(PostStatus.Inactive));
+            Assert.That(post.Slug, Is.Not.Empty);
             Assert.That(post.CreatedAt, Is.EqualTo(publishDate));
             Assert.That(post.UpdatedAt, Is.EqualTo(publishDate));
             Assert.That(post.PublishAt, Is.EqualTo(publishDate));
@@ -191,6 +195,16 @@ namespace Blog.Tests.UnitTests.Domain.Entities
             Assert.That(post.CreatedAt, Is.EqualTo(default(DateTime)));
             Assert.That(post.UpdatedAt, Is.EqualTo(default(DateTime)));
             Assert.That(post.PublishAt, Is.Null);
+        }
+
+        [Test]
+        public void GenerateSlug_ShouldCreatePostSlug_WhenSuccessful()
+        {
+            post.AssignToCategory(category);
+
+            post.Publish();
+
+            Assert.That(post.Slug, Is.Not.Empty);
         }
 
     }

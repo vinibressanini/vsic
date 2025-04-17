@@ -5,10 +5,10 @@ namespace Blog.Domain.Entities
 {
     public class User : Entity
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public Guid Id { get; private init; }
+        public string Name { get; private set; }
+        public string Email { get; private set; }
+        public string Password { get; private set; }
         public ICollection<Comment> Comments { get; set; }
 
         private List<Post> _favorites = new();
@@ -24,31 +24,23 @@ namespace Blog.Domain.Entities
             Email = email;
             Password = password;
 
-            AddDomainEvents(new UserCreatedEvent(username: name,email: email));
-        }
-        
-        public void FavoritePost(Guid Id)
-        {
-            if (_favorites.Any(f => f.Id == Id))
-            {
-                //TODO: Exceção personalizada
-                throw new Exception("Post already favorite");
-            }
-
-            ///_favorites.Add(new Favorite { Id = Id, UserId = Id });
+            AddDomainEvents(new UserCreatedEvent(username: name, email: email));
         }
 
-        public void UnfavoritePost(Guid Id)
+
+        public void FavoritePost(Post post)
         {
-            Post? favorite = _favorites.FirstOrDefault(f => f.Id == Id);
+            Post? favorite = _favorites.FirstOrDefault(f => f.Id == post.Id);
 
             if (favorite == null)
             {
-                //TODO: Exceção personalizada
-                throw new Exception("Post insn't a favorite");
+                _favorites.Add(post);
+            }
+            else
+            {
+                _favorites.Remove(post);
             }
 
-            _favorites.Remove(favorite);
 
         }
     }

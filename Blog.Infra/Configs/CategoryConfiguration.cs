@@ -14,7 +14,8 @@ namespace Blog.Infra.Configs
 
             builder.Property(c => c.Name)
                 .HasColumnName("name")
-                .HasColumnType("varchar(50)")
+                .HasColumnType("varchar")
+                .HasMaxLength(50)
                 .IsRequired();
 
             builder.HasMany(c => c.Posts)

@@ -10,6 +10,7 @@ namespace Blog.Domain.Entities
         public Guid Id { get; private init; }
         public string Title { get; private set; }
         public string Content { get; private set; }
+        public string Slug { get; private set; }
         public PostStatus Status { get; private set; }
         public DateTime? PublishAt { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -35,12 +36,6 @@ namespace Blog.Domain.Entities
             Id = id;
             Title = title;
             Content = content;
-
-            //TODO: Mover 
-            var size = ((int)Math.Ceiling(content.Length * 0.33));
-            var preview = content.Substring(0, size);
-
-            AddDomainEvents(new PostCreatedEvent(postName: title, contentPreview: preview));
         }
         #endregion
 
@@ -66,6 +61,9 @@ namespace Blog.Domain.Entities
                 CreatedAt = DateTime.UtcNow;
                 UpdatedAt = DateTime.UtcNow;
                 Status = PostStatus.Active;
+                generatePostSlug();
+
+                AddDomainEvents(new PostCreatedEvent(postName: Title, contentPreview: Content));
             }
         }
 
@@ -78,7 +76,10 @@ namespace Blog.Domain.Entities
                 PublishAt = publishAt;
                 CreatedAt = publishAt;
                 UpdatedAt = publishAt;
-                Status = PostStatus.Active;
+                Status = PostStatus.Inactive;
+                generatePostSlug();
+
+                AddDomainEvents(new PostScheduledEvent(postId: Id, publishAt: publishAt));
             }
 
 
@@ -113,6 +114,14 @@ namespace Blog.Domain.Entities
 
             return true;
         }
+
+        private void generatePostSlug()
+        {
+            var text = Title.ToLower();
+
+            Slug = text.Replace(" ", "-");
+        }
+
         #endregion
     }
 

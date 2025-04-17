@@ -21,6 +21,11 @@ namespace Blog.Infra.Configs
                 .HasColumnName("content")
                 .HasColumnType("varchar")
                 .IsRequired();
+            
+            builder.Property(p => p.Slug)
+                .HasColumnName("slug")
+                .HasColumnType("varchar")
+                .IsRequired();
 
             builder.Property(p => p.CreatedAt)
                 .HasColumnName("created_at")
