@@ -1,11 +1,14 @@
 ﻿using Blog.Domain.Entities;
 using Blog.Domain.Events;
+using Blog.Infra.Configs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Infra.Context
 {
     public class BlogDbContext : DbContext
     {
+        #region PROPERTIES
+        private readonly DatabaseConfiguration _configuration;
 
         #region DBSETS
 
@@ -17,13 +20,17 @@ namespace Blog.Infra.Context
 
         #endregion
 
+        public BlogDbContext(DatabaseConfiguration configuration) => _configuration = configuration;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("");
+            optionsBuilder.UseNpgsql($"Host={_configuration.Host};Database={_configuration.Database};Username={_configuration.User};Password={_configuration.Password};Port=5432");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BlogDbContext).Assembly);
         }
     }
