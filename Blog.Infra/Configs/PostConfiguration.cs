@@ -10,7 +10,11 @@ namespace Blog.Infra.Configs
         {
             builder.ToTable("tb_post");
 
-            builder.HasKey(p => p.Id).HasName("id");
+            builder.HasKey(u => u.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("guid")
+                .HasColumnType("uuid");
 
             builder.Property(p => p.Title)
                 .HasColumnName("title")
@@ -31,10 +35,11 @@ namespace Blog.Infra.Configs
                 .HasColumnName("created_at")
                 .HasColumnType("timestamp")
                 .IsRequired();
-            
+
             builder.Property(p => p.UpdatedAt)
                 .HasColumnName("updated_at")
-                .HasColumnType("timestamp");
+                .HasColumnType("timestamp")
+                .IsRequired();
 
             builder.Property(p => p.PublishAt)
                 .HasColumnName("publish_at")
@@ -53,7 +58,7 @@ namespace Blog.Infra.Configs
                 .WithMany(c => c.Posts)
                 .UsingEntity(j =>
                 {
-                    j.ToTable("post_category");
+                    j.ToTable("tb_post_category");
                 });
 
         }

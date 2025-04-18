@@ -11,7 +11,11 @@ namespace Blog.Infra.Configs
 
             builder.ToTable("tb_domain_event");
 
-            builder.HasKey(de => de.Id).HasName("id");
+            builder.HasKey(u => u.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("guid")
+                .HasColumnType("uuid");
 
             builder.Property(de => de.CreatedAt)
                 .HasColumnName("created_at")
@@ -24,7 +28,7 @@ namespace Blog.Infra.Configs
 
             builder.Property(de => de.Status)
                 .HasColumnName("status")
-                .HasColumnType("smallserial")
+                .HasColumnType("int")
                 .IsRequired();
 
             builder.Property(de => de.Event)

@@ -7,9 +7,9 @@ namespace Blog.Domain.Entities
         public Guid Id { get;  set; }
         public Guid? ParentId { get;  set; }
         public User Author { get;  set; }
-        public int AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
         public Post Post { get; set; }
-        public int PostId { get; set; }
+        public Guid PostId { get; set; }
         public string Content { get;  set; }
         public DateTime CreatedAt { get;  init; } = DateTime.UtcNow;
 

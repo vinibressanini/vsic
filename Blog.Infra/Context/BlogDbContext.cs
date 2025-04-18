@@ -9,6 +9,7 @@ namespace Blog.Infra.Context
     {
         #region PROPERTIES
         private readonly DatabaseConfiguration _configuration;
+        #endregion
 
         #region DBSETS
 

@@ -9,8 +9,12 @@ namespace Blog.Infra.Configs
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable("tb_category");
-            
-            builder.HasKey(u => u.Id).HasName("id");
+
+            builder.HasKey(u => u.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("guid")
+                .HasColumnType("uuid");
 
             builder.Property(c => c.Name)
                 .HasColumnName("name")
@@ -22,7 +26,7 @@ namespace Blog.Infra.Configs
                 .WithMany(p => p.Categories)
                 .UsingEntity(j =>
                 {
-                    j.ToTable("post_category");
+                    j.ToTable("tb_post_category");
                 });
 
         }

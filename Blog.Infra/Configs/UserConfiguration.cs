@@ -10,7 +10,11 @@ namespace Blog.Infra.Configs
         {
             builder.ToTable("tb_user");
 
-            builder.HasKey(u => u.Id).HasName("id");
+            builder.HasKey(u => u.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("guid")
+                .HasColumnType("uuid");
 
             builder.Property(u => u.Name)
                 .HasColumnName("name")
