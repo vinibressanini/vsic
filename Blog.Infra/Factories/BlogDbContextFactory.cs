@@ -20,7 +20,7 @@ namespace Blog.Infra.Factories
                 .GetSection("Database")
                 .Get<DatabaseConfiguration>();
 
-            return new BlogDbContext(dbConfig);
+            return new BlogDbContext(dbConfig!);
         }
     }
 }
