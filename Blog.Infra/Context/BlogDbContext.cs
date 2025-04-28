@@ -32,6 +32,8 @@ namespace Blog.Infra.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BlogDbContext).Assembly);
         }
     }

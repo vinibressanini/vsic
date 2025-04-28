@@ -24,10 +24,21 @@ namespace Blog.Infra.Configs
 
             builder.HasMany(c => c.Posts)
                 .WithMany(p => p.Categories)
-                .UsingEntity(j =>
-                {
-                    j.ToTable("tb_post_category");
-                });
+                .UsingEntity<Dictionary<string, object>>(
+                    "tb_post_category",
+                    j => j
+                        .HasOne<Post>()
+                        .WithMany()
+                        .HasForeignKey("post_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Category>()
+                        .WithMany()
+                        .HasForeignKey("category_id")
+                        .HasConstraintName("FK_tb_post_category_category_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasKey("post_id","category_id")
+                );
 
         }
     }

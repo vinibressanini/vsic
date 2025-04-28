@@ -1,6 +1,5 @@
 using Blog.Infra.Configs;
 using Blog.Infra.Context;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace Blog.API
 {

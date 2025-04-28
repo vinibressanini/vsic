@@ -33,10 +33,25 @@ namespace Blog.Infra.Configs
 
             builder.HasMany(u => u.Favorites)
                 .WithMany(p => p.FavoritedBy)
-                .UsingEntity(j =>
-                {
-                    j.ToTable("tb_favorites");
-                });
+                .UsingEntity<Dictionary<string, object>>    ( 
+                    "tb_favorites", 
+                    j => j
+                        .HasOne<Post>()
+                        .WithMany()
+                        .HasForeignKey("post_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey("post_id", "user_id"); 
+                    }
+                );
+
+
         }
     }
 }
