@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Blog.Infra.Configs
+namespace Blog.Infra.Configs.EntityConfiguration
 {
     internal class DomainEventConfiguration : IEntityTypeConfiguration<DomainEvent>
     {
@@ -19,12 +19,12 @@ namespace Blog.Infra.Configs
 
             builder.Property(de => de.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
 
             builder.Property(de => de.ProcessedAt)
                 .HasColumnName("processed_at")
-                .HasColumnType("timestamp");
+                .HasColumnType("timestamptz");
 
             builder.Property(de => de.Status)
                 .HasColumnName("status")

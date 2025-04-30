@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Blog.Infra.Configs
+namespace Blog.Infra.Configs.EntityConfiguration
 {
     internal class PostConfiguration : IEntityTypeConfiguration<Post>
     {
@@ -25,7 +25,7 @@ namespace Blog.Infra.Configs
                 .HasColumnName("content")
                 .HasColumnType("varchar")
                 .IsRequired();
-            
+
             builder.Property(p => p.Slug)
                 .HasColumnName("slug")
                 .HasColumnType("varchar")
@@ -33,17 +33,17 @@ namespace Blog.Infra.Configs
 
             builder.Property(p => p.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
 
             builder.Property(p => p.UpdatedAt)
                 .HasColumnName("updated_at")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
 
             builder.Property(p => p.PublishAt)
                 .HasColumnName("publish_at")
-                .HasColumnType("timestamp");
+                .HasColumnType("timestamptz");
 
             builder.Property(p => p.Status)
                 .HasColumnName("status")

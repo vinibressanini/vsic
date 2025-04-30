@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Blog.Infra.Configs
+namespace Blog.Infra.Configs.EntityConfiguration
 {
-    internal class CommmentConfiguration : IEntityTypeConfiguration<Comment>
+    internal class CommentConfiguration : IEntityTypeConfiguration<Comment>
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
@@ -25,7 +25,7 @@ namespace Blog.Infra.Configs
 
             builder.Property(c => c.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
 
             builder.HasOne(c => c.Post)

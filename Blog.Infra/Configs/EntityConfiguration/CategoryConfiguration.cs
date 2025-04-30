@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Blog.Infra.Configs
+namespace Blog.Infra.Configs.EntityConfiguration
 {
     internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
@@ -37,7 +37,7 @@ namespace Blog.Infra.Configs
                         .HasForeignKey("category_id")
                         .HasConstraintName("FK_tb_post_category_category_id")
                         .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasKey("post_id","category_id")
+                    j => j.HasKey("post_id", "category_id")
                 );
 
         }

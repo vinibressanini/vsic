@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Blog.Infra.Configs
+namespace Blog.Infra.Configs.EntityConfiguration
 {
     internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
@@ -33,8 +33,8 @@ namespace Blog.Infra.Configs
 
             builder.HasMany(u => u.Favorites)
                 .WithMany(p => p.FavoritedBy)
-                .UsingEntity<Dictionary<string, object>>    ( 
-                    "tb_favorites", 
+                .UsingEntity<Dictionary<string, object>>(
+                    "tb_favorites",
                     j => j
                         .HasOne<Post>()
                         .WithMany()
@@ -47,7 +47,7 @@ namespace Blog.Infra.Configs
                         .OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
-                        j.HasKey("post_id", "user_id"); 
+                        j.HasKey("post_id", "user_id");
                     }
                 );
 
