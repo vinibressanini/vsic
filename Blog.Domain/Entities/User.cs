@@ -24,7 +24,7 @@ namespace Blog.Domain.Entities
             Email = email;
             Password = password;
 
-            AddDomainEvents(new UserCreatedEvent(username: name, email: email));
+            AddDomainEvents(new UserCreatedEvent(Username: name, Email: email));
         }
 
 

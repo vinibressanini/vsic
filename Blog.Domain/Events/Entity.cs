@@ -12,7 +12,7 @@ namespace Blog.Domain.Events
             _domainEvents.Add(domainEvent);
         }
 
-        public IReadOnlyList<IDomainEvent> GetDomainEvents() => _domainEvents.AsReadOnly();
+        public IReadOnlyList<IDomainEvent> GetDomainEvents() => _domainEvents.ToList().AsReadOnly();
 
         public void ClearDomainEvents() => _domainEvents.Clear();
 

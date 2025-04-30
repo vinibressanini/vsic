@@ -12,9 +12,9 @@
         // ORM 
         public DomainEvent() { }
 
-        public DomainEvent(Guid id, string dEvent, string payload)
+        public DomainEvent(string dEvent, string payload)
         {
-            Id = id;
+            Id = new Guid();
             Event = dEvent;
             Payload = payload;
             CreatedAt = DateTime.UtcNow;

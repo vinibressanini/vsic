@@ -1,6 +1,7 @@
 ﻿using Blog.Domain.Events;
 using Blog.Domain.Events.Comment;
 using Blog.Domain.Events.Post;
+using System.Text.Json.Serialization;
 
 namespace Blog.Domain.Entities
 {
@@ -17,10 +18,10 @@ namespace Blog.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
         public ICollection<User> FavoritedBy { get; set; }
 
-        private List<Comment> _comments = new();
+        private List<Comment> _comments = new();        
         public IReadOnlyCollection<Comment> Comments => _comments;
 
-        private List<Category> _categories = new();
+        private List<Category> _categories = new();        
         public IReadOnlyCollection<Category> Categories => _categories;
         #endregion
 
@@ -63,7 +64,7 @@ namespace Blog.Domain.Entities
                 Status = PostStatus.Active;
                 generatePostSlug();
 
-                AddDomainEvents(new PostCreatedEvent(postName: Title, contentPreview: Content));
+                AddDomainEvents(new PostCreatedEvent(PostName: Title, ContentPreview: Content));
             }
         }
 
@@ -79,7 +80,7 @@ namespace Blog.Domain.Entities
                 Status = PostStatus.Inactive;
                 generatePostSlug();
 
-                AddDomainEvents(new PostScheduledEvent(postId: Id, publishAt: publishAt));
+                AddDomainEvents(new PostScheduledEvent(PostId: Id, PublishAt: publishAt));
             }
 
 
