@@ -1,5 +1,4 @@
-using Blog.Infra.Configs;
-using Blog.Infra.Context;
+using Blog.API.Settings;    
 
 namespace Blog.API
 {
@@ -9,17 +8,25 @@ namespace Blog.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
 
-            builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("Database"));
-            builder.Services.AddDbContext<BlogDbContext>();
-            
-            
+
+            builder.AddBlogDbContext();
+
+
             var app = builder.Build();
 
-
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             // Configure the HTTP request pipeline.
 

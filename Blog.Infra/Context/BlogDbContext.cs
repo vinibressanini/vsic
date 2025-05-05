@@ -1,6 +1,5 @@
 ﻿using Blog.Domain.Entities;
 using Blog.Domain.Events;
-using Blog.Infra.Configs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Infra.Context

@@ -28,7 +28,7 @@ namespace Blog.Infra.Configs.EntityConfiguration
 
             builder.Property(de => de.Status)
                 .HasColumnName("status")
-                .HasColumnType("int")
+                .HasConversion<string>()
                 .IsRequired();
 
             builder.Property(de => de.Event)

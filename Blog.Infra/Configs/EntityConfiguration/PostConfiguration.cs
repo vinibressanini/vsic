@@ -47,7 +47,7 @@ namespace Blog.Infra.Configs.EntityConfiguration
 
             builder.Property(p => p.Status)
                 .HasColumnName("status")
-                .HasColumnType("smallserial")
+                .HasConversion<string>()
                 .IsRequired();
 
             builder.HasMany(p => p.Comments)
