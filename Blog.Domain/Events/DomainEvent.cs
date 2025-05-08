@@ -34,6 +34,6 @@
     {
         Pending,
         Processed,
-        Error
+        Failed
     }
 }
