@@ -1,6 +1,4 @@
-﻿using Blog.Infra.Configs;
-using Blog.Infra.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Blog.Infra.Context;
 
 namespace Blog.API.Settings
 {

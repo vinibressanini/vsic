@@ -12,4 +12,9 @@
     <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Blog.Application\Blog.Application.csproj" />
+    <ProjectReference Include="..\Blog.API\Blog.API.csproj" />
+  </ItemGroup>
+
 </Project>

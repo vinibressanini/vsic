@@ -1,5 +1,6 @@
 ﻿using Blog.Domain.Entities;
 using Blog.Domain.Events;
+using Blog.Infra.Services.Notification.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Infra.Context
@@ -14,6 +15,7 @@ namespace Blog.Infra.Context
         public DbSet<Comment> Comment { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<DomainEvent> DomainEvent { get; set; }
+        public DbSet<Subscriber> Subscriber { get; set; }
 
         #endregion
 

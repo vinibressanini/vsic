@@ -1,7 +1,6 @@
 ﻿using Blog.Infra.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace Blog.Infra.Context
 {
