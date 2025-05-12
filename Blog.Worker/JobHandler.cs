@@ -1,4 +1,6 @@
-﻿using Blog.Domain.Events;
+﻿using Blog.Application.Handlers;
+using Blog.Domain.Events;
+using Blog.Domain.Events.Post;
 using Blog.Infra.Context;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +14,15 @@ namespace Blog.Worker
 
         private readonly BlogDbContext context;
         private readonly IServiceProvider serviceProvider;
-        private List<Exception> ExceptionsAggregate = new();
+        private readonly ILogger<JobHandler> logger;
 
-        public JobHandler(BlogDbContext context,IServiceProvider serviceProvider)
+        public JobHandler(BlogDbContext context, IServiceProvider serviceProvider, ILogger<JobHandler> logger)
         {
             this.context = context;
             this.serviceProvider = serviceProvider;
+            this.logger = logger;
         }
 
-        [AutomaticRetry(Attempts = 5, DelaysInSeconds = new[] { 450, 900, 1800, 1800, 1800 })]
         public async Task Handle()
         {
             using var scope = serviceProvider.CreateScope();
@@ -30,24 +32,28 @@ namespace Blog.Worker
                 .Where(de => de.Status == DomainEventStatus.Pending)
                 .ToListAsync();
 
-            foreach ( var @event in domainEvents )
+            foreach (var @event in domainEvents)
             {
                 try
                 {
                     var domainEvent = DeserializeEvent(@event);
                     var handlerType = FindEventHandler(@event);
 
-                    await HandleDomainEvent(handlerType, scope, domainEvent);
-
+                    if (domainEvent is PostScheduledEvent)
+                    {
+                        BackgroundJob.Schedule<PostScheduledEventHandler>(h => h.Handle((PostScheduledEvent)domainEvent), (domainEvent as PostScheduledEvent).PublishAt);
+                    }
+                    else
+                    {
+                        await HandleDomainEvent(handlerType, scope, domainEvent);
+                    }
                     @event.Processed(DomainEventStatus.Processed);
 
-
-                } catch ( Exception  )
+                }
+                catch (Exception ex)
                 {
                     @event.Processed(DomainEventStatus.Failed);
-                } finally
-                {
-                    context.DomainEvent.Update(@event);
+                    logger.LogError(ex, $"Error while processing event {@event.Event}");
                 }
 
                 await context.SaveChangesAsync();
