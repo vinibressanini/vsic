@@ -3,6 +3,7 @@ using Blog.Domain.Events;
 using Blog.Domain.Events.Post;
 using Blog.Infra.Context;
 using Blog.Shared.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -29,19 +30,21 @@ public class PostCreatedEventHandler : IDomainEventHandler
 
         try
         {
-            subscribers.ForEach(async sub =>
+            foreach (var sub in subscribers)
             {
+
                 EmailMessage message = new(To: sub.Email, Subject: $"New Post: {@event.PostName}", Body: @event.ContentPreview);
 
-                await smtpClient.SendAsync(message);
-            });
 
-            logger.LogInformation($"Successfully notified all subscriber | Post: {@event.PostName}");
+                await smtpClient.SendAsync(message);
+
+            }
+
+            logger.LogInformation($"Successfully notified all subscribers for Post: {@event.PostName}");
 
         }
-        catch (EmailSendException ex)
+        catch (Exception)
         {
-            logger.LogError(ex, "An error occurred while sending emails");
             throw;
         }
 

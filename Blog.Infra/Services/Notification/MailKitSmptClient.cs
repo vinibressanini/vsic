@@ -6,6 +6,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.Net.Sockets;
 
 namespace Blog.Infra.Services.Notification
 {
@@ -13,12 +14,10 @@ namespace Blog.Infra.Services.Notification
     {
 
         private readonly SmtpConfiguration _smtpConfiguration;
-        private readonly ILogger<MailKitSmptClient> _logger;
 
-        public MailKitSmptClient(IOptions<SmtpConfiguration> options, ILogger<MailKitSmptClient> logger)
+        public MailKitSmptClient(IOptions<SmtpConfiguration> options)
         {
             _smtpConfiguration = options.Value;
-            _logger = logger;
         }
         public async Task SendAsync(EmailMessage message, CancellationToken cancellationToken = default)
         {
@@ -44,8 +43,11 @@ namespace Blog.Infra.Services.Notification
             }
             catch (SmtpCommandException ex)
             {
-                _logger.LogError(ex, $"Error while connecting to SMTP server {_smtpConfiguration.Server}");
                 throw new EmailSendException("Error while connecting to SMTP server",ex);
+            }
+            catch (SocketException ex)
+            {
+                throw new EmailSendException("Error while connecting to SMTP server. Check the host address", ex);
             }
 
             if (smtp.Capabilities.HasFlag(SmtpCapabilities.Authentication))
@@ -57,12 +59,10 @@ namespace Blog.Infra.Services.Notification
                 }
                 catch (AuthenticationException ex)
                 {
-                    _logger.LogError(ex, "Error while authenticating. Wrong credentials");
                     throw new EmailSendException("Error while authenticating. Wrong credentials", ex);
                 }
                 catch (SmtpCommandException ex)
                 {
-                    _logger.LogError(ex, $"Error trying to authenticate: {ex.Message}");
                     throw new EmailSendException("Error trying to authenticate", ex);
                 }
 
@@ -72,7 +72,6 @@ namespace Blog.Infra.Services.Notification
                 }
                 catch (SmtpCommandException ex)
                 {
-                    _logger.LogError(ex,$"Error [{ex.ErrorCode}] while sending message: {ex.Message}");
                     throw new EmailSendException($"Error [{ex.ErrorCode}] while sending message: {ex.Message}", ex);
                 }
             }
