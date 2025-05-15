@@ -3,7 +3,6 @@ using Blog.API.Settings;
 using Blog.Infra.Configs;
 using Blog.Shared.Interfaces;
 using Blog.Infra.Services.Notification;
-
 namespace Blog.Worker
 {
     public class Program
@@ -12,10 +11,13 @@ namespace Blog.Worker
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // email service
             builder.Services.Configure<SmtpConfiguration>(
                 builder.Configuration.GetSection("Smtp"));
+            builder.Services.AddScoped<ISMTPClientWrapper, MailKitSmtpClientWrapper>();
+            builder.Services.AddScoped<IEmailService, MailKitEmailService>();
 
-            builder.Services.AddScoped<ISMTPClient, MailKitSmptClient>();
+            //handlers
             builder.Services.AddScoped<PostCreatedEventHandler>();
 
             builder.AddBlogDbContext();

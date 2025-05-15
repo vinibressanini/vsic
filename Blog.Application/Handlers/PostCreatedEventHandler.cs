@@ -1,22 +1,20 @@
-﻿using Blog.Application.Exceptions;
-using Blog.Domain.Events;
+﻿using Blog.Domain.Events;
 using Blog.Domain.Events.Post;
 using Blog.Infra.Context;
 using Blog.Shared.Interfaces;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 public class PostCreatedEventHandler : IDomainEventHandler
 {
 
-    private readonly ISMTPClient smtpClient;
+    private readonly IEmailService emailService;
     private readonly BlogDbContext context;
     private readonly ILogger<PostCreatedEventHandler> logger;
 
-    public PostCreatedEventHandler(ISMTPClient smtpClient, BlogDbContext context, ILogger<PostCreatedEventHandler> logger)
+    public PostCreatedEventHandler(IEmailService emailService, BlogDbContext context, ILogger<PostCreatedEventHandler> logger)
     {
-        this.smtpClient = smtpClient;
+        this.emailService = emailService;
         this.context = context;
         this.logger = logger;
     }
@@ -36,7 +34,7 @@ public class PostCreatedEventHandler : IDomainEventHandler
                 EmailMessage message = new(To: sub.Email, Subject: $"New Post: {@event.PostName}", Body: @event.ContentPreview);
 
 
-                await smtpClient.SendAsync(message);
+                await emailService.SendAsync(message);
 
             }
 
