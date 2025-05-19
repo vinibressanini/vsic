@@ -1,9 +1,8 @@
 ﻿using Blog.Application.Exceptions;
 using Blog.Domain.Events.Post;
 using Blog.Infra.Context;
-using Blog.Infra.Services.Notification.Models;
 using Blog.Shared.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Blog.Tests.Fixtures;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -21,44 +20,16 @@ namespace Blog.Tests.UnitTests.Application.Handlers
         [SetUp]
         public async Task SetUp()
         {
-            var options = new DbContextOptionsBuilder<BlogDbContext>()
-                .UseInMemoryDatabase(databaseName: "test_db")
-                .Options;
-
+            
             logger = new Mock<ILogger<PostCreatedEventHandler>>();
 
-            context = new BlogDbContext(options);
+            var fixture = new BlogDbContextFixture();
+
+            context = fixture.context;
 
             @event = new(PostName: "PostCreatedEvent Test", ContentPreview: "Lorem Ipsum Dolor");
 
-            await LoadDb();
         }
-
-        [TearDown]
-        public async Task TearDown()
-        {
-            await context.DisposeAsync();
-        }
-
-        private async Task LoadDb()
-        {
-
-            var subscribers = new List<Subscriber>()
-            {
-
-            new Subscriber() {Id  = new Guid(), Email = "subscriber1@email.com" },
-            new Subscriber() { Id = new Guid(), Email = "subscriber2@email.com" },
-            new Subscriber() { Id = new Guid(), Email = "subscriber3@email.com" }
-
-             };
-
-
-            await context.AddRangeAsync(subscribers);
-
-            await context.SaveChangesAsync();
-
-        }
-
 
         [Test]
         public async Task Handle_ShouldSendEmailToAllSubscribers_WhenSuccessful()
