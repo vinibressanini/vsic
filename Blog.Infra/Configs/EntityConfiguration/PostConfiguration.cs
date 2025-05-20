@@ -25,10 +25,20 @@ namespace Blog.Infra.Configs.EntityConfiguration
                 .HasColumnName("content")
                 .HasColumnType("varchar")
                 .IsRequired();
+            
+            builder.Property(p => p.Description)
+                .HasColumnName("description")
+                .HasColumnType("varchar")
+                .IsRequired();
 
             builder.Property(p => p.Slug)
                 .HasColumnName("slug")
                 .HasColumnType("varchar")
+                .IsRequired();
+
+            builder.Property(p => p.Views)
+                .HasColumnName("views")
+                .HasColumnType("integer")
                 .IsRequired();
 
             builder.Property(p => p.CreatedAt)

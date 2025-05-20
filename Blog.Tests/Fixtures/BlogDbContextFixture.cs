@@ -42,16 +42,16 @@ namespace Blog.Tests.Fixtures
                 new Category() { Id = new Guid(), Name = "Games"},
             };
 
-            var scheduledPost = new Post(id: new Guid(), title: "Scheduled Post", content: "Content for the scheduled post");
+            var scheduledPost = new Post(id: new Guid(), title: "Scheduled Post", content: "Content for the scheduled post", description: "Post Description");
             scheduledPost.AssignToCategory(categories.First());
             scheduledPost.PublishAtDate(DateTime.Now.AddDays(2));
 
 
             var posts = new List<Post>()
             {
-                new Post(id: new Guid(), title: "First Post", content: "Generic content for the first post"),
-                new Post(id: new Guid(), title: "Second Post", content: "Generic content for the second post"),
-                new Post(id: new Guid(), title: "Third Post", content: "Generic content for the third post")
+                new Post(id: new Guid(), title: "First Post", content: "Generic content for the first post", description : "Post Description"),
+                new Post(id: new Guid(), title: "Second Post", content: "Generic content for the second post", description : "Post Description"),
+                new Post(id: new Guid(), title: "Third Post", content: "Generic content for the third post", description : "Post Description")
 
              };
 

@@ -16,7 +16,7 @@ namespace Blog.Tests.UnitTests.Domain.Entities
         public void SetUp()
         {
             user = new User(id: new Guid(), name: "User", email: "email.com", password: "password");
-            post = new Post(id: new Guid(), title: "Post Title", content: "Post Content");
+            post = new Post(id: new Guid(), title: "Post Title", content: "Post Content", description: "Post Description");
         }
 
         [Test]

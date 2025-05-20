@@ -20,6 +20,7 @@ public class MailKitSmtpClientWrapper : ISMTPClientWrapper
     public override async Task SendAsync(EmailMessage message, CancellationToken cancellationToken)
     {
         var mimeMessage = new MimeMessage();
+        mimeMessage.From.Add(MailboxAddress.Parse("vinimarcus41@gmail.com"));
         mimeMessage.To.Add(MailboxAddress.Parse(message.To));
         mimeMessage.Subject = message.Subject;
         mimeMessage.Body = new TextPart(message.IsHtml ? "html" : "plain")

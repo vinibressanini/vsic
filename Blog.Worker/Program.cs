@@ -3,6 +3,9 @@ using Blog.API.Settings;
 using Blog.Infra.Configs;
 using Blog.Shared.Interfaces;
 using Blog.Infra.Services.Notification;
+using Blog.Application.Handlers;
+using Blog.Infra.Services.EmailRenderer;
+using Blog.Application.Models;
 namespace Blog.Worker
 {
     public class Program
@@ -16,9 +19,11 @@ namespace Blog.Worker
                 builder.Configuration.GetSection("Smtp"));
             builder.Services.AddScoped<ISMTPClientWrapper, MailKitSmtpClientWrapper>();
             builder.Services.AddScoped<IEmailService, MailKitEmailService>();
+            builder.Services.AddScoped(typeof(IEmailTemplateRenderer<>), typeof(EmailRenderer<>));
 
             //handlers
             builder.Services.AddScoped<PostCreatedEventHandler>();
+            builder.Services.AddScoped<UserCreatedEventHandler>();
 
             builder.AddBlogDbContext();
             builder.Services.AddHostedService<Listener>();

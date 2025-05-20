@@ -1,7 +1,6 @@
 ﻿using Blog.Domain.Events;
 using Blog.Domain.Events.Comment;
 using Blog.Domain.Events.Post;
-using System.Text.Json.Serialization;
 
 namespace Blog.Domain.Entities
 {
@@ -10,8 +9,10 @@ namespace Blog.Domain.Entities
         #region PROPERTIES
         public Guid Id { get; private init; }
         public string Title { get; private set; }
+        public string Description { get; private set; }
         public string Content { get; private set; }
         public string Slug { get; private set; }
+        public int Views { get; private set; }
         public PostStatus Status { get; private set; }
         public DateTime? PublishAt { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -32,11 +33,12 @@ namespace Blog.Domain.Entities
 
         }
 
-        public Post(Guid id, string title, string content)
+        public Post(Guid id, string title, string content, string description)
         {
             Id = id;
             Title = title;
             Content = content;
+            Description = description;
         }
         #endregion
 
@@ -126,6 +128,9 @@ namespace Blog.Domain.Entities
 
             Slug = text.Replace(" ", "-");
         }
+
+        private void IncrementPostViews() => Views++;
+        
 
         #endregion
     }
