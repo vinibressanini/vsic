@@ -1,5 +1,4 @@
 ﻿using Blog.Application.Models;
-using Blog.Domain.Events;
 using Blog.Domain.Events.User;
 using Blog.Infra.Context;
 using Blog.Shared.Interfaces;
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Application.Handlers
 {
-    public class UserCreatedEventHandler : IDomainEventHandler
+    public class UserCreatedEventHandler : IDomainEventHandler<UserCreatedEvent>
     {
 
         private IEmailService emailService;

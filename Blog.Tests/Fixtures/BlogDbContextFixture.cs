@@ -1,4 +1,5 @@
 ﻿using Blog.Domain.Entities;
+using Blog.Domain.Events;
 using Blog.Infra.Context;
 using Blog.Infra.Services.Notification.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +23,15 @@ namespace Blog.Tests.Fixtures
 
             context.Database.EnsureDeleted();
 
-            SeedData();
+            Task.WaitAll([SeedData()]);
 
 
         }
 
-        private void SeedData()
+        private async Task SeedData()
         {
 
-            context.Subscriber.AddRange(
+            await context.Subscriber.AddRangeAsync(
                 new Subscriber() { Id = new Guid(), Email = "subscriber1@email.com" },
                 new Subscriber() { Id = new Guid(), Email = "subscriber2@email.com" },
                 new Subscriber() { Id = new Guid(), Email = "subscriber3@email.com" }
@@ -58,15 +59,16 @@ namespace Blog.Tests.Fixtures
             foreach (var post in posts)
             {
                 post.AssignToCategory(categories.First());
+                post.IncrementPostViews();
                 post.Publish();
             }
 
-            context.Category.AddRange(categories);
+            await context.Category.AddRangeAsync(categories);
 
-            context.Post.AddRange(posts);
+            await context.Post.AddRangeAsync(posts);
             context.Post.Add(scheduledPost);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
         }
 

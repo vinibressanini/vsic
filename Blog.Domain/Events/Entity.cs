@@ -1,4 +1,6 @@
 ﻿
+using Blog.Shared.Interfaces;
+
 namespace Blog.Domain.Events
 {
     public class Entity

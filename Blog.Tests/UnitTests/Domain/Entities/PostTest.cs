@@ -207,5 +207,18 @@ namespace Blog.Tests.UnitTests.Domain.Entities
             Assert.That(post.Slug, Is.Not.Empty);
         }
 
+        [Test]
+        public void IncrementPostViews_ShouldIncrementPostViews_WhenSuccessful()
+        {
+
+            post.AssignToCategory(category);
+            post.Publish();
+
+            post.IncrementPostViews();
+
+            Assert.That(post.Views, Is.EqualTo(1));
+
+        }
+
     }
 }

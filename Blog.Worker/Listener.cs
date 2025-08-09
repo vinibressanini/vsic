@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using Blog.Domain.Events;
+using Hangfire;
 using Npgsql;
 
 namespace Blog.Worker
@@ -14,7 +15,7 @@ namespace Blog.Worker
             conn.Notification += (obj, args) =>
             {
 
-                BackgroundJob.Enqueue<JobHandler>(jb => jb.Handle());
+                BackgroundJob.Enqueue<JobHandler>(jb => jb.Handle(DomainEventStatus.Pending));
 
 
             };

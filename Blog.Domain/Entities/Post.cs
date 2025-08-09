@@ -111,6 +111,7 @@ namespace Blog.Domain.Entities
             }
             _categories.Remove(assignedCategory);
         }
+        public void IncrementPostViews() => Views++;
 
         private bool postHasAnyCategory()
         {
@@ -128,8 +129,6 @@ namespace Blog.Domain.Entities
 
             Slug = text.Replace(" ", "-");
         }
-
-        private void IncrementPostViews() => Views++;
         
 
         #endregion

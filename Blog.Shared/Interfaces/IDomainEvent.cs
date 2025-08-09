@@ -1,4 +1,4 @@
-﻿namespace Blog.Domain.Events
+﻿namespace Blog.Shared.Interfaces
 {
     public interface IDomainEvent
     {

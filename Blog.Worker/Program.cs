@@ -5,7 +5,10 @@ using Blog.Shared.Interfaces;
 using Blog.Infra.Services.Notification;
 using Blog.Application.Handlers;
 using Blog.Infra.Services.EmailRenderer;
-using Blog.Application.Models;
+using Blog.Domain.Events.Post;
+using Blog.Domain.Events.User;
+using Hangfire;
+using Blog.Domain.Events;
 namespace Blog.Worker
 {
     public class Program
@@ -22,8 +25,9 @@ namespace Blog.Worker
             builder.Services.AddScoped(typeof(IEmailTemplateRenderer<>), typeof(EmailRenderer<>));
 
             //handlers
-            builder.Services.AddScoped<PostCreatedEventHandler>();
-            builder.Services.AddScoped<UserCreatedEventHandler>();
+            builder.Services.AddScoped<IDomainEventHandler<PostCreatedEvent>,PostCreatedEventHandler>();
+            builder.Services.AddScoped<IDomainEventHandler<UserCreatedEvent>,UserCreatedEventHandler>();
+            builder.Services.AddScoped<IDomainEventHandler<PostScheduledEvent>,PostScheduledEventHandler>();
 
             builder.AddBlogDbContext();
             builder.Services.AddHostedService<Listener>();
@@ -31,6 +35,12 @@ namespace Blog.Worker
             builder.AddLogging();
 
             var app = builder.Build();
+
+            // Recurring job for handling failed domain events
+            RecurringJob.AddOrUpdate<JobHandler>(
+                "failed-jobs",
+                h => h.Handle(DomainEventStatus.Failed),
+                Cron.Hourly);
 
 
             // Configure the HTTP request pipeline.

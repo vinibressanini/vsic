@@ -5,13 +5,12 @@ using Blog.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-public class PostCreatedEventHandler : IDomainEventHandler
+public class PostCreatedEventHandler : IDomainEventHandler<PostCreatedEvent>
 {
 
     private readonly IEmailService emailService;
     private readonly BlogDbContext context;
     private readonly ILogger<PostCreatedEventHandler> logger;
-
     public PostCreatedEventHandler(IEmailService emailService, BlogDbContext context, ILogger<PostCreatedEventHandler> logger)
     {
         this.emailService = emailService;

@@ -1,4 +1,4 @@
-﻿using Blog.Domain.Entities;
+﻿using Blog.Shared.Interfaces;
 
 namespace Blog.Domain.Events.Comment
 {

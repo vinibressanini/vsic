@@ -2,6 +2,7 @@
 using Blog.Domain.Events;
 using Blog.Domain.Events.Post;
 using Blog.Infra.Context;
+using Blog.Shared.Interfaces;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,23 +14,27 @@ namespace Blog.Worker
     {
 
         private readonly BlogDbContext context;
-        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceScopeFactory serviceProvider;
         private readonly ILogger<JobHandler> logger;
+        private readonly IBackgroundJobClient backgroundJobClient;
 
-        public JobHandler(BlogDbContext context, IServiceProvider serviceProvider, ILogger<JobHandler> logger)
+        public JobHandler(BlogDbContext context, IServiceScopeFactory serviceProvider, IBackgroundJobClient backgroundJobClient, ILogger<JobHandler> logger)
         {
             this.context = context;
             this.serviceProvider = serviceProvider;
             this.logger = logger;
+            this.backgroundJobClient = backgroundJobClient;
         }
 
-        public async Task Handle()
+        // Handles events based on the given status 
+
+        public async Task Handle(DomainEventStatus eventStatus)
         {
             using var scope = serviceProvider.CreateScope();
 
             var domainEvents = await context
                 .DomainEvent
-                .Where(de => de.Status == DomainEventStatus.Pending)
+                .Where(de => de.Status == eventStatus)
                 .ToListAsync();
 
             foreach (var @event in domainEvents)
@@ -37,11 +42,11 @@ namespace Blog.Worker
                 try
                 {
                     var domainEvent = DeserializeEvent(@event);
-                    var handlerType = FindEventHandler(@event);
+                    var handlerType = FindEventHandler(domainEvent);
 
-                    if (domainEvent is PostScheduledEvent)
+                    if (domainEvent is PostScheduledEvent scheduledEvent)
                     {
-                        BackgroundJob.Schedule<PostScheduledEventHandler>(h => h.Handle((PostScheduledEvent)domainEvent), (domainEvent as PostScheduledEvent).PublishAt);
+                        BackgroundJob.Schedule<PostScheduledEventHandler>(h => h.Handle(scheduledEvent), scheduledEvent.PublishAt);
                     }
                     else
                     {
@@ -68,9 +73,9 @@ namespace Blog.Worker
             return (IDomainEvent)JsonConvert.DeserializeObject(domainEvent.Payload, type!)!;
         }
 
-        private Type FindEventHandler(DomainEvent domainEvent)
+        private Type FindEventHandler(IDomainEvent domainEvent)
         {
-            return Assembly.Load("Blog.Application").GetTypes().FirstOrDefault(t => t.Name == $"{domainEvent.Event}Handler")!;
+            return typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
         }
 
         private async Task HandleDomainEvent(Type handlerType, IServiceScope scope, IDomainEvent @event)
