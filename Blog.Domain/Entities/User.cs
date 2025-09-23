@@ -5,13 +5,14 @@ namespace Blog.Domain.Entities
 {
     public class User : Entity
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public Guid Id { get; private init; }
+        public string Name { get; private set; }
+        public string Email { get; private set; }
+        public string Password { get; private set; }
+        public ICollection<Comment> Comments { get; set; }
 
-        private List<Favorite> _favorites = new();
-        public IReadOnlyCollection<Favorite> Favorites => _favorites.AsReadOnly();
+        private List<Post> _favorites = new();
+        public IReadOnlyCollection<Post> Favorites => _favorites.AsReadOnly();
 
         // ORM
         public User() { }
@@ -23,30 +24,23 @@ namespace Blog.Domain.Entities
             Email = email;
             Password = password;
 
-            AddDomainEvents(new UserCreatedEvent(username: name,email: email));
+            AddDomainEvents(new UserCreatedEvent(Username: name, Email: email));
         }
 
-        public void FavoritePost(Guid postId)
-        {
-            if (_favorites.Any(f => f.PostId == postId))
-            {
-                //TODO: Exceção personalizada
-                throw new Exception("Post already favorite");
-            }
-            _favorites.Add(new Favorite { PostId = postId, UserId = Id });
-        }
 
-        public void UnfavoritePost(Guid postId)
+        public void FavoritePost(Post post)
         {
-            Favorite? favorite = _favorites.FirstOrDefault(f => f.PostId == postId);
+            Post? favorite = _favorites.FirstOrDefault(f => f.Id == post.Id);
 
             if (favorite == null)
             {
-                //TODO: Exceção personalizada
-                throw new Exception("Post insn't a favorite");
+                _favorites.Add(post);
+            }
+            else
+            {
+                _favorites.Remove(post);
             }
 
-            _favorites.Remove(favorite);
 
         }
     }

@@ -1,8 +1,8 @@
-﻿using Blog.Domain.Entities;
+﻿using Blog.Shared.Interfaces;
 
 namespace Blog.Domain.Events.Comment
 {
-    public record CommentCreatedEvent (Entities.Comment comment) : IDomainEvent
+    public record CommentCreatedEvent (Entities.Comment Comment) : IDomainEvent
     {
     }
 }

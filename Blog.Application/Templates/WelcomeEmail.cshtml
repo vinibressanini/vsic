@@ -1,0 +1,44 @@
+﻿@using Blog.Application.Models
+@model WelcomeEmailModel
+
+<body style="font-family: Georgia, Times, 'Times New Roman', serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+
+    <div id="top-container" style="background-color: #5D3FD3; padding: 20px; text-align: center;">
+        <img src="handshake.png" alt="" style="width: 100px; background-color: #F28C28; padding: 15px; border-radius: 50%;">
+    </div>
+
+    <div class="main-content" style="width: 90%; max-width: 600px; margin: 0 auto; text-align: center; padding: 20px;">
+
+        <h1 style="font-size: 2em; margin-top: 20px;">Welcome to Vsic!</h1>
+
+        <p style="font-size: 1.1em; margin: 10px 0;">Dear <b>New User</b>,</p>
+        <p style="font-size: 1.1em; margin: 10px 0;">Thank you for signing up for Vsic! We are thrilled to have you on board.</p>
+        <p style="font-size: 1.1em; margin: 10px 0;">Feel free to explore our posts! We have plenty of options for all kind of person!</p>
+
+        <h2 style="font-size: 1.8em; margin-top: 30px;">Some posts you may like:</h2>
+
+        <div class="posts" style="display: block; margin-top: 20px;">
+
+            @foreach (var post in Model.Posts)
+            {
+                <div class="post-card" style="background-color: #F0F0F0; border-radius: 10px; padding: 20px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <h3 style="font-size: 1.3em; margin-bottom: 10px;">@post.Title</h3>
+                    <div class="post-image" style="width: 100%; height: auto; margin-bottom: 10px;">
+                        <img src="@post.ImageUrl" alt="" style="width: 100%; border-radius: 10px;">
+                    </div>
+                    <p style="font-size: 1em; margin: 10px 0;">@post.Description</p>
+                    <a href="@post.Url" style="text-decoration: none; color: white; font-weight: bold; padding: 10px 20px; border-radius: 5px; background-color: #F28C28; display: inline-block;">Read More</a>
+                </div>
+            }
+
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a href="https://example.com" style="background-color: #5D3FD3; color: white; text-decoration: none; font-weight: bold; padding: 15px 30px; border-radius: 5px; display: inline-block; font-size: 1.1em;">
+                Go to Vsic
+            </a>
+        </div>
+
+    </div>
+
+</body>

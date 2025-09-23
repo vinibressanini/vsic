@@ -6,38 +6,43 @@ namespace Blog.Domain.Entities
 {
     public class Post : Entity
     {
-
-        public Guid Id { get; private set; }
+        #region PROPERTIES
+        public Guid Id { get; private init; }
         public string Title { get; private set; }
+        public string Description { get; private set; }
         public string Content { get; private set; }
-        public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private  set; } = DateTime.UtcNow;
-        public ushort FavoriteCount { get; private set; }
+        public string Slug { get; private set; }
+        public int Views { get; private set; }
+        public PostStatus Status { get; private set; }
+        public DateTime? PublishAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
+        public ICollection<User> FavoritedBy { get; set; }
 
         private List<Comment> _comments = new();
         public IReadOnlyCollection<Comment> Comments => _comments;
 
         private List<Category> _categories = new();
         public IReadOnlyCollection<Category> Categories => _categories;
+        #endregion
 
+        #region CONSTRUCTORS
         // ORM
         public Post()
         {
 
         }
 
-        public Post(Guid id, string title, string content)
+        public Post(Guid id, string title, string content, string description)
         {
             Id = id;
             Title = title;
             Content = content;
-
-            var size = ((int)Math.Ceiling(content.Length * 0.33));
-            var preview = content.Substring(0,size);
-
-            AddDomainEvents(new PostCreatedEvent(postName : title,contentPreview : preview));
+            Description = description;
         }
+        #endregion
 
+        #region DOMAIN LOGIC
         public void AddComment(Comment comment)
         {
 
@@ -49,6 +54,41 @@ namespace Blog.Domain.Entities
             _comments.Add(comment);
 
             AddDomainEvents(new CommentCreatedEvent(comment));
+
+        }
+
+        public void Publish()
+        {
+            if (PublishAt != null)
+            {
+                Status = PostStatus.Active;
+            }
+            else if (postHasAnyCategory())
+            {
+                CreatedAt = DateTime.UtcNow;
+                UpdatedAt = DateTime.UtcNow;
+                Status = PostStatus.Active;
+                generatePostSlug();
+
+            }
+            AddDomainEvents(new PostCreatedEvent(PostName: Title, ContentPreview: Content));
+        }
+
+        public void PublishAtDate(DateTime publishAt)
+        {
+            if (publishAt < DateTime.UtcNow) throw new Exception("The publish date should be greater than now");
+
+            if (postHasAnyCategory())
+            {
+                PublishAt = publishAt;
+                CreatedAt = publishAt;
+                UpdatedAt = publishAt;
+                Status = PostStatus.Inactive;
+                generatePostSlug();
+
+                AddDomainEvents(new PostScheduledEvent(PostId: Id, PublishAt: publishAt));
+            }
+
 
         }
 
@@ -71,7 +111,32 @@ namespace Blog.Domain.Entities
             }
             _categories.Remove(assignedCategory);
         }
+        public void IncrementPostViews() => Views++;
 
+        private bool postHasAnyCategory()
+        {
+            if (!_categories.Any())
+            {
+                throw new Exception("Post must have atleast one category assigned");
+            }
 
+            return true;
+        }
+
+        private void generatePostSlug()
+        {
+            var text = Title.ToLower();
+
+            Slug = text.Replace(" ", "-");
+        }
+        
+
+        #endregion
+    }
+
+    public enum PostStatus
+    {
+        Active,
+        Inactive,
     }
 }
